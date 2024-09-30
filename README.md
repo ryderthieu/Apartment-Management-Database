@@ -28,7 +28,7 @@ cuộc sống và đảm bảo sự hài lòng của cư dân.
 ## Mục tiêu
 Hệ thống quản lý chung cư được thiết kế để đáp ứng nhu cầu của các tòa nhà từ
 nhỏ đến vừa và lớn, có khả năng phục vụ cho ban quản lý và cư dân. Hệ thống này
-cung cấp một giao diện thân thiện, cho phép ban quản lý và cư dân dễ dàng truy cập và
+cung cấp các chức năng cho phép ban quản lý và cư dân dễ dàng truy cập và
 quản lý thông tin liên quan đến việc vận hành và bảo trì tòa nhà, từ việc theo dõi phí
 quản lý, giao tiếp với cư dân, đến việc đặt lịch và quản lý các tiện ích chung.
 ## Thiết kế bài toán
