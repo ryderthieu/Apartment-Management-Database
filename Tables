@@ -1,0 +1,173 @@
+CREATE DATABASE QLCHUNGCU;
+USE QLCHUNGCU;
+
+													-- TẠO BẢNG --
+CREATE TABLE NhanVien (
+    MaNV CHAR(6) NOT NULL,
+    TenNV VARCHAR(30) NOT NULL,
+    GioiTinh VARCHAR(4),
+    SDT VARCHAR(10) UNIQUE,
+    DiaChi VARCHAR(255) NOT NULL,
+    NgSinh DATE NOT NULL,
+    NgVL DATE NOT NULL,
+    LoaiNV VARCHAR(10) NOT NULL,
+    MatKhau VARCHAR(255),
+    PRIMARY KEY (MaNV)
+);
+
+-- Tạo bảng DichVu
+CREATE TABLE DichVu (
+    MaDV CHAR(6) NOT NULL,
+    TenDV VARCHAR(255) NOT NULL,
+    PhiDV DECIMAL(10, 2) NOT NULL,
+    PRIMARY KEY (MaDV)
+);
+
+-- Tạo bảng PhuTrach
+CREATE TABLE PhuTrach (
+    MaHD CHAR(6) NOT NULL,
+    MaNV CHAR(6) NOT NULL,
+    PRIMARY KEY (MaHD, MaNV)
+);
+
+-- Tạo bảng HoaDon
+CREATE TABLE HoaDon (
+	MaHD CHAR(5) NOT NULL,
+    TenHD VARCHAR(30) NOT NULL,
+    NgHD DATETIME NOT NULL,
+    PhiPS DECIMAL(10, 2),
+    TriGia DECIMAL(10, 2),
+    TinhTrang INT NOT NULL,
+    GhiChu TEXT,
+    MaDV CHAR(6) NOT NULL,
+    MaCH CHAR(6) NOT NULL,
+    PRIMARY KEY (MaHD)
+);
+
+-- Tạo bảng CuDan
+CREATE TABLE CuDan (
+    MaCD CHAR(6) NOT NULL,
+    TenCD VARCHAR(30) NOT NULL,
+    GioiTinh VARCHAR(4) NOT NULL,
+    SDT VARCHAR(10) UNIQUE,
+    NgSinh DATE NOT NULL,
+    QueQuan VARCHAR(30) NOT NULL,
+    MaCH CHAR(6) NOT NULL,
+    NgVaoO DATE,
+    MatKhau VARCHAR(255),
+    PRIMARY KEY (MaCD)
+);
+
+-- Tạo bảng CanHo
+CREATE TABLE CanHo (
+    MaCH CHAR(6) NOT NULL,
+    LoaiCH VARCHAR(10) NOT NULL,
+    MoTa TEXT,
+    DienTich DECIMAL(5, 2) NOT NULL,
+    Gia DECIMAL(14, 2) NOT NULL,
+    MaTang CHAR(7) NOT NULL,
+    TinhTrang INT NOT NULL,
+    ChuHo CHAR(6),
+    PRIMARY KEY (MaCH)
+);
+
+-- Tạo bảng Tang
+CREATE TABLE Tang (
+    MaTang CHAR(5) NOT NULL,
+    TenTang VARCHAR(10) NOT NULL,
+    SoCH INT NOT NULL,
+    MaToa CHAR(6) NOT NULL,
+    PRIMARY KEY (MaTang)
+);
+
+-- Tạo bảng Toa
+CREATE TABLE Toa (
+    MaToa CHAR(6) NOT NULL,
+    TenToa VARCHAR(10) NOT NULL,
+    SoTang INT NOT NULL,
+	MoTa TEXT,
+    PRIMARY KEY (MaToa)
+);
+
+-- Tạo bảng ThietBi
+CREATE TABLE ThietBi (
+    MaTBi CHAR(6) NOT NULL,
+    TenTBi VARCHAR(30) NOT NULL,
+    SL INT NOT NULL,
+    PRIMARY KEY (MaTBi) 
+);
+
+-- Tạo bảng BoTri
+CREATE TABLE BoTri (
+    MaTBi CHAR(6) NOT NULL,
+    MaTang CHAR(5) NOT NULL,
+    SL INT NOT NULL,
+    PRIMARY KEY (MaTBi, MaTang)
+);
+
+-- Tạo bảng ThongBao
+CREATE TABLE ThongBao (
+    MaTB CHAR(6) NOT NULL,
+    LoaiTB VARCHAR(30) NOT NULL,
+	TieuDe VARCHAR(255) NOT NULL,
+    NoiDung TEXT NOT NULL,
+	NgTB DATETIME NOT NULL,
+    PRIMARY KEY (MaTB)
+);
+
+-- Tạo bảng TB_CD
+CREATE TABLE TB_CD (
+    MaTB CHAR(6) NOT NULL,
+    MaCD CHAR(6) NOT NULL,
+    PRIMARY KEY (MaTB , MaCD)
+);
+
+CREATE TABLE PhanAnh (
+	MaPA CHAR(6) NOT NULL,
+    LoaiPA VARCHAR(20) NOT NULL,
+	TieuDe VARCHAR(255) NOT NULL,
+	NoiDung TEXT NOT NULL,
+    NgPA DATETIME NOT NULL,
+    TinhTrang INT NOT NULL,
+    MaCD CHAR(6) NOT NULL,
+    PRIMARY KEY (MaPA, MaCD)
+);
+
+                                                          -- TẠO KHÓA NGOẠI --
+
+-- Thêm khóa ngoại cho bảng PhuTrach
+ALTER TABLE PhuTrach
+ADD CONSTRAINT FK_PT_MANV FOREIGN KEY (MaNV) REFERENCES NhanVien(MaNV),
+ADD CONSTRAINT FK_PT_MAHD FOREIGN KEY (MaHD) REFERENCES HoaDon(MaHD);
+
+-- Thêm khóa ngoại cho bảng HoaDon
+ALTER TABLE HoaDon
+ADD CONSTRAINT FK_HD_MACH FOREIGN KEY (MaCH) REFERENCES CanHo(MaCH),
+ADD CONSTRAINT FK_HD_MADV FOREIGN KEY (MaDV) REFERENCES DichVu(MaDV);
+
+-- Thêm khóa ngoại cho bảng CuDan
+ALTER TABLE CuDan
+ADD CONSTRAINT FK_CD_MACH FOREIGN KEY (MaCH) REFERENCES CanHo(MaCH);
+
+-- Thêm khóa ngoại cho bảng CanHo
+ALTER TABLE CanHo
+ADD CONSTRAINT FK_CANHO_MATANG FOREIGN KEY (MaTang) REFERENCES Tang(MaTang),
+ADD CONSTRAINT FK_CANHO_CHUHO FOREIGN KEY (ChuHo) REFERENCES CuDan(MaCD);
+
+-- Thêm khóa ngoại cho bảng Tang
+ALTER TABLE Tang
+ADD CONSTRAINT FK_TANG_MATOA FOREIGN KEY (MaToa) REFERENCES Toa(MaToa);
+
+-- Thêm khóa ngoại cho bảng BoTri
+ALTER TABLE BoTri
+ADD CONSTRAINT FK_BOTRI_MATBI FOREIGN KEY (MaTBi) REFERENCES ThietBi(MaTBi),
+ADD CONSTRAINT FK_BOTRI_MATANG FOREIGN KEY (MaTang) REFERENCES Tang(MaTang);
+
+-- Thêm khóa ngoại cho bảng TB_CD
+ALTER TABLE TB_CD
+ADD CONSTRAINT FK_TB_CD_MATB FOREIGN KEY (MaTB) REFERENCES ThongBao(MaTB),
+ADD CONSTRAINT FK_TB_CD_MACD FOREIGN KEY (MaCD) REFERENCES CuDan(MaCD);
+
+-- Thêm khóa ngoại cho bảng PhanAnh
+ALTER TABLE PhanAnh
+ADD CONSTRAINT FK_PhanAnh_MaCD FOREIGN KEY (MaCD) REFERENCES CuDan(MaCD);
